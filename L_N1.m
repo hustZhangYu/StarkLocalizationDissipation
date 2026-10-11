@@ -15,8 +15,8 @@ for d=1:L
     end
 
 
-    Lk1=La(L,Na,gamma);
-    Lk2=Lb(L,Na,gamma);
+    Lk1=BoundaryLossOperator(L,Na,gamma,1);
+    Lk2=BoundaryLossOperator(L,Na,gamma,L);
 
     dim=size(H,1);
 
@@ -45,11 +45,11 @@ end
 figure()
 plot(linspace(1,L,L)/L,data,'*')
 
-%blkdiag Ö±ºÍº¯Êı
+%blkdiag ç›´å’Œå‡½æ•°
 
 function H=Ha(L,N,J,F)
-% Õâ¸öº¯ÊıµÄÖ÷ÒªÄ¿µÄÊÇ¸ø³ö¹Ì¶¨Á£×ÓÊıºÍ¹Ì¶¨´óĞ¡µÄ¹şÃÜ¶ÙÁ¿
-% ÒªµÃµ½ÌØ¶¨µÄLiouvillian Ëã·û£¬»¹ĞèÒª¶ÔÈ«Á£×Ó¿Õ¼ä×öÖ±ºÍ
+% è¿™ä¸ªå‡½æ•°çš„ä¸»è¦ç›®çš„æ˜¯ç»™å‡ºå›ºå®šç²’å­æ•°å’Œå›ºå®šå¤§å°çš„å“ˆå¯†é¡¿é‡
+% è¦å¾—åˆ°ç‰¹å®šçš„Liouvillian ç®—ç¬¦ï¼Œè¿˜éœ€è¦å¯¹å…¨ç²’å­ç©ºé—´åšç›´å’Œ
 
 key=nchoosek(1:L,N);
 basis=zeros(size(key,1),L);
@@ -59,7 +59,7 @@ for i=1:size(key,1)
     end
 end
 
-% ½ÓÏÂÀ´¹¹Ôì¹şÃÜ¶ÙÁ¿
+% æ¥ä¸‹æ¥æ„é€ å“ˆå¯†é¡¿é‡
 dim=size(key,1);
 H=zeros(dim,dim);
 
@@ -68,7 +68,7 @@ H=zeros(dim,dim);
 
 for k=1:L-1
     bz=zeros(1,L);
-    bz(1,k)=1;bz(1,k+1)=-1;            % ÕâÀïÖ÷ÒªË¼Â·ÊÇ£¬Ç°ºóÁ½×é»ùÊ¸Ïà¼õ ,£¨10£©-£¨01£©»á³öÏÖ£¨1£¬-1£©ÆäÓà¶¼ÊÇ0
+    bz(1,k)=1;bz(1,k+1)=-1;            % è¿™é‡Œä¸»è¦æ€è·¯æ˜¯ï¼Œå‰åä¸¤ç»„åŸºçŸ¢ç›¸å‡ ,ï¼ˆ10ï¼‰-ï¼ˆ01ï¼‰ä¼šå‡ºç°ï¼ˆ1ï¼Œ-1ï¼‰å…¶ä½™éƒ½æ˜¯0
     for i=1:dim-1
         for j=i+1:size(key,1)
             if basis(i,:)-basis(j,:)==bz
@@ -86,78 +86,6 @@ for i=1:dim
    H(i,i)=F*sum(basis(i,:).*V); 
 end
 
-
-end
-
-function Lk=La(L,N,gamma)
-% ²»Í¬³ß´çÏÂÃæµÄ±ß½ç×óºÄÉ¢Ëã·û
-% N ÊÇ×î´óÁ£×ÓÊı
-
-basis=[];
-for k1=1:N
-    N1=N-k1+1;
-    key=nchoosek(1:L,N1);
-    basis1=zeros(size(key,1),L);
-    for i=1:size(key,1)
-    for j=1:N1
-        basis1(i,key(i,j))=1;     
-    end
-    end
-    basis=[basis;basis1]; 
-end
-
-basis=[basis;zeros(1,L)];
-dim=size(basis,1);
-Lk=zeros(dim,dim);
-
-bz=zeros(1,L);
-bz(1,1)=1;
-
-for i=1:dim-1
-    for j=i+1:dim
-        if i==21 && j==26
-            basis(i,:)-basis(j,:)
-        end
-        if basis(i,:)-basis(j,:)==bz
-           Lk(j,i)=gamma;
-        end
-    end
-end
-
-end
-
-function Lk=Lb(L,N,gamma)
-% ²»Í¬³ß´çÏÂÃæµÄ±ß½ç×óºÄÉ¢Ëã·û
-basis=[];
-for k1=1:N
-    N1=N-k1+1;
-    key=nchoosek(1:L,N1);
-    basis1=zeros(size(key,1),L);
-    for i=1:size(key,1)
-    for j=1:N1
-        basis1(i,key(i,j))=1;     
-    end
-    end
-    basis=[basis;basis1]; 
-end
-
-basis=[basis;zeros(1,L)];
-dim=size(basis,1);
-Lk=zeros(dim,dim);
-
-bz=zeros(1,L);
-bz(1,L)=1;
-
-for i=1:dim-1
-    for j=i+1:dim
-        if i==21 && j==26
-            basis(i,:)-basis(j,:)
-        end
-        if basis(i,:)-basis(j,:)==bz
-           Lk(j,i)=gamma;
-        end
-    end
-end
 
 end
 
